@@ -34,21 +34,32 @@ const Job = ({
           <JobInfo icon={<FaLocationArrow />} text={jobLocation} />
           <JobInfo icon={<FaCalendarAlt />} text={date} />
           <JobInfo icon={<FaBriefcase />} text={jobType} />
-          <div className={`status ${status}`}>{status}jo</div>
+          <div className={`status ${status}`}>{status}</div>
         </div>
         <footer>
           <div className='actions'>
             <Link
               to='/add-job'
               className='btn edit-btn'
-              onClick={() => console.log('edit job')}
+              onClick={() =>
+                dispatch(
+                  setEditJob({
+                    editJobId: _id,
+                    position,
+                    company,
+                    jobLocation,
+                    jobType,
+                    status,
+                  })
+                )
+              }
             >
               Edit
             </Link>
             <button
               type='button'
               className='btn delete-btn'
-              onClick={() => console.log('delete job')}
+              onClick={() => dispatch(deleteJob(_id))}
             >
               Delete
             </button>

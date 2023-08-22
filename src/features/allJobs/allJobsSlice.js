@@ -28,15 +28,22 @@ export const getAllJobs = createAsyncThunk(
   async (_, thunkAPI) => {
     let url = `/jobs`
     try {
-      const resp = await customFetch.get(url, {
-        headers: {
-          authorization: `Bearer ${thunkAPI.getState().user.user.token}`,
-        },
-      })
-      console.log(resp.data)
+      const resp = await customFetch.get(url)
       return resp.data
     } catch (error) {
       return thunkAPI.rejectWithValue('there was an error')
+    }
+  }
+)
+
+export const showStats = createAsyncThunk(
+  'allJobs/showStats',
+  async (_, thunkAPI) => {
+    try {
+      const resp = await customFetch.get('/jobs/stats')
+      return resp.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.msg)
     }
   }
 )
@@ -51,6 +58,13 @@ const allJobsSlice = createSlice({
     hideLoading: (state) => {
       state.isLoading = false
     },
+    handleChange: (state, { payload: { name, value } }) => {
+      //stage.page = 1 later
+      state[name] = value
+    },
+    clearFilters: (state) => {
+      return { ...state, ...initialFiltersState }
+    },
   },
   extraReducers: {
     [getAllJobs.pending]: (state) => {
@@ -64,9 +78,22 @@ const allJobsSlice = createSlice({
       state.isLoading = false
       toast.error(payload)
     },
+    [showStats.pending]: (state) => {
+      state.isLoading = true
+    },
+    [showStats.fulfilled]: (state, { payload }) => {
+      state.isLoading = false
+      state.stats = payload.defaultStats
+      state.monthlyApplications = payload.monthlyApplications
+    },
+    [showStats.rejected]: (state, { payload }) => {
+      state.isLoading = false
+      toast.error(payload)
+    },
   },
 })
 
-export const { showLoading, hideLoading } = allJobsSlice.actions
+export const { showLoading, hideLoading, handleChange, clearFilters } =
+  allJobsSlice.actions
 
 export default allJobsSlice.reducer
