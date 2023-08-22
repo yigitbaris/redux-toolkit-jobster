@@ -10,10 +10,9 @@ import {
 } from '../../features/job/jobSlice'
 import { useEffect } from 'react'
 import React from 'react'
-
 const AddJob = () => {
   const {
-    isLoadig,
+    isLoading,
     position,
     company,
     jobLocation,
@@ -25,12 +24,9 @@ const AddJob = () => {
     editJobId,
   } = useSelector((store) => store.job)
   const { user } = useSelector((store) => store.user)
-
   const dispatch = useDispatch()
-
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log('submitted')
 
     if (!position || !company || !jobLocation) {
       toast.error('Please fill out all fields')
@@ -48,6 +44,12 @@ const AddJob = () => {
     dispatch(createJob({ position, company, jobLocation, jobType, status }))
   }
 
+  const handleJobInput = (e) => {
+    const name = e.target.name
+    const value = e.target.value
+    dispatch(handleChange({ name, value }))
+  }
+
   useEffect(() => {
     if (!isEditing) {
       dispatch(
@@ -58,12 +60,6 @@ const AddJob = () => {
       )
     }
   }, [])
-
-  const handleJobInput = (e) => {
-    const name = e.target.name
-    const value = e.target.value
-    dispatch(handleChange({ name, value }))
-  }
 
   return (
     <Wrapper>
@@ -99,7 +95,7 @@ const AddJob = () => {
             handleChange={handleJobInput}
             list={statusOptions}
           />
-          {/* job type */}
+          {/* job type*/}
           <FormRowSelect
             name='jobType'
             labelText='job type'
@@ -111,9 +107,7 @@ const AddJob = () => {
             <button
               type='button'
               className='btn btn-block clear-btn'
-              onClick={() => {
-                dispatch(clearValues())
-              }}
+              onClick={() => dispatch(clearValues())}
             >
               clear
             </button>
@@ -121,7 +115,7 @@ const AddJob = () => {
               type='submit'
               className='btn btn-block submit-btn'
               onClick={handleSubmit}
-              disabled={isLoadig}
+              disabled={isLoading}
             >
               submit
             </button>
